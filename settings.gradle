@@ -1,0 +1,2 @@
+rootProject.name = 'field-getting'
+include('models-a', 'models-b', 'victim')

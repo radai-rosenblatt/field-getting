@@ -1,0 +1,15 @@
+subprojects {
+    plugins.withType(JavaPlugin) {
+        repositories {
+            mavenCentral()
+        }
+
+        test {
+            useJUnitPlatform()
+            testLogging {
+                events "started", "passed", "failed", "skipped"
+            }
+            testLogging.showStandardStreams = true
+        }
+    }
+}

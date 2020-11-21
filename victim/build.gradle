@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+}
+
+configurations {
+    withA
+    withB
+}
+
+dependencies {
+    compileOnly project(':models-a')
+
+    testCompileOnly project(':models-a')
+    testImplementation(platform('org.junit:junit-bom:5.7.0'))
+    testImplementation('org.junit.jupiter:junit-jupiter')
+
+    withA project(':models-a')
+    withB project(':models-b')
+}
+
+test {
+    //we run test multiple times with different classpaths
+    //(see below), so dont use the default test task
+    enabled = false
+}
+
+task testWithA (type: Test, group: "Verification", description: "runs unit tests with models-a") {
+    useJUnitPlatform()
+    testLogging {
+        showStandardStreams = true
+        showExceptions = true
+        showStackTraces = true
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        events "started", "passed", "skipped", "failed"
+    }
+    classpath = project.sourceSets.test.runtimeClasspath.plus (configurations.withA)
+}
+
+task testWithB (type: Test, group: "Verification", description: "runs unit tests with models-b") {
+    useJUnitPlatform()
+    testLogging {
+        showStandardStreams = true
+        showExceptions = true
+        showStackTraces = true
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        events "started", "passed", "skipped", "failed"
+    }
+    classpath = project.sourceSets.test.runtimeClasspath.plus (configurations.withB)
+}
+
+tasks.build.dependsOn testWithA
+tasks.build.dependsOn testWithB
